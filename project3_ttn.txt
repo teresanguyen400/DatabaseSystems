@@ -1,0 +1,682 @@
+SQL> 
+SQL> 	     --This will ensure that all input and output is logged to the file.
+SQL> 		     set echo on
+SQL> 
+SQL> 	     --Teresa Nguyen
+SQL> 	     --INSY 3304-001
+SQL> 	     --Project 3
+SQL> 
+SQL> 	     --1. Format the columns to ensure that the headings don't get truncated.
+SQL> 	     COLUMN PatientID FORMAT a10
+SQL> 	     COLUMN PatientPhone FORMAT a13
+SQL> 	     COLUMN BillingType FORMAT a12
+SQL> 	     COLUMN InsCoID FORMAT a8
+SQL> 	     COLUMN DrID FORMAT a5
+SQL> 	     COLUMN PmtStatusCode FORMAT a14
+SQL> 	     COLUMN ApptStatusCode FORMAT a15
+SQL> 	     COLUMN BlockCode FORMAT a10
+SQL> 	     COLUMN BlockCodeDesc FORMAT a14
+SQL> 	     COLUMN ApptReasonCode FORMAT a15
+SQL> 	     COLUMN ApptID FORMAT a7
+SQL> 	     COLUMN ReasonCode FORMAT a11
+SQL> 
+SQL> 	     ALTER SESSION SET nls_date_format = 'DD-MON-YYYY hh24:mi';
+
+Session altered.
+
+SQL> 
+SQL> 	     --2. Set the width of the page to 130 characters.
+SQL> 	     SET PAGESIZE 50
+SQL> 	     SET LINESIZE 130
+SQL> 
+SQL> 	     --3. Aliases and dot notation will be applied in SELECT statements that require a JOIN.
+SQL> 
+SQL> 	     --4. Rename the ApptDate and ApptTime columns.
+SQL> 	     ALTER TABLE APPOINTMENT_ttn
+  2  	     RENAME COLUMN ApptDate
+  3  		     TO ApptDateTime;
+
+Table altered.
+
+SQL> 
+SQL> 	     --Change the data type to DATETIME for ApptDate and ApptTime.
+SQL> 
+SQL> 	     --Update the Appointments with the new date/time data
+SQL> 	     UPDATE APPOINTMENT_ttn
+  2  		     SET ApptDateTime = '25-SEP-2021 09:00'
+  3  	     WHERE ApptID = 101;
+
+1 row updated.
+
+SQL> 
+SQL> 	     UPDATE APPOINTMENT_ttn
+  2  		     SET ApptDateTime = '25-SEP-2021 09:00'
+  3  	     WHERE ApptID = 102;
+
+1 row updated.
+
+SQL> 
+SQL> 	     UPDATE APPOINTMENT_ttn
+  2  		     SET ApptDateTime = '25-SEP-2021 10:30'
+  3  	     WHERE ApptID = 103;
+
+1 row updated.
+
+SQL> 
+SQL> 	     UPDATE APPOINTMENT_ttn
+  2  		     SET ApptDateTime = '25-SEP-2021 10:30'
+  3  	     WHERE ApptID = 104;
+
+1 row updated.
+
+SQL> 
+SQL> 	     UPDATE APPOINTMENT_ttn
+  2  		     SET ApptDateTime = '25-SEP-2021 10:30'
+  3  	     WHERE ApptID = 105;
+
+1 row updated.
+
+SQL> 
+SQL> 	     UPDATE APPOINTMENT_ttn
+  2  		     SET ApptDateTime = '25-SEP-2021 10:30'
+  3  	     WHERE ApptID = 106;
+
+1 row updated.
+
+SQL> 
+SQL> 	     UPDATE APPOINTMENT_ttn
+  2  		     SET ApptDateTime = '25-SEP-2021 11:30'
+  3  	     WHERE ApptID = 107;
+
+1 row updated.
+
+SQL> 
+SQL> 	     UPDATE APPOINTMENT_ttn
+  2  		     SET ApptDateTime = '25-SEP-2021 11:30'
+  3  	     WHERE ApptID = 108;
+
+1 row updated.
+
+SQL> 
+SQL> 	     UPDATE APPOINTMENT_ttn
+  2  		     SET ApptDateTime = '25-SEP-2021 14:00'
+  3  	     WHERE ApptID = 109;
+
+1 row updated.
+
+SQL> 
+SQL> 	     UPDATE APPOINTMENT_ttn
+  2  		     SET ApptDateTime = '26-SEP-2021 08:30'
+  3  	     WHERE ApptID = 110;
+
+1 row updated.
+
+SQL> 
+SQL> 	     UPDATE APPOINTMENT_ttn
+  2  		     SET ApptDateTime = '26-SEP-2021 08:30'
+  3  	     WHERE ApptID = 111;
+
+1 row updated.
+
+SQL> 
+SQL> 	     /*To DROP a column, use the following syntax
+SQL> 	     ALTER TABLE <tablename>
+SQL> 	     DROP COLUMN <columnname>;
+SQL> 	     */
+SQL> 
+SQL> 	     --Drop ApptTime COLUMN
+SQL> 	     ALTER TABLE APPOINTMENT_ttn
+  2  		     DROP COLUMN ApptTime;
+
+Table altered.
+
+SQL> 
+SQL> 	     --5. If necessary, use an ALTER TABLE statement to modify the datatype of BlockMinutes column to be Number(2).
+SQL> 	     --This is already changed in Project 2.
+SQL> 
+SQL> 	     --6. Add a new appointment and appointment detail row.
+SQL> 	     INSERT INTO APPOINTMENT_ttn
+  2  		     VALUES ((SELECT (MAX(ApptID) + 1) FROM APPOINTMENT_ttn), '26-SEP-2021 11:00', 15, 'SP', NULL, 1, 'CN', 'NP');
+
+1 row created.
+
+SQL> 
+SQL> 		     --Add appointment details using the ApptID for the new appointment above:
+SQL> 	     INSERT INTO APPTDETAIL_ttn
+  2  		     VALUES ((SELECT MAX(ApptID) FROM APPOINTMENT_ttn), 'PT', 'L4');
+	INSERT INTO APPTDETAIL_ttn
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (SYSTEM.SYS_C0010429) violated - parent key not found 
+
+
+SQL> 
+SQL> 	     --7. Add a new appointment. Generate the ApptID for by incrementing the max ApptID by 1.
+SQL> 	     INSERT INTO APPOINTMENT_ttn
+  2  		     VALUES ((SELECT (MAX(ApptID) + 1) FROM APPOINTMENT_ttn), '26-SEP-2021 13:00', 101, 'I', 323, 3, 'NC', 'NP');
+
+1 row created.
+
+SQL> 
+SQL> 	     --Add appointment details using the ApptID for the new appointment above:
+SQL> 	     INSERT INTO APPTDETAIL_ttn
+  2  		     VALUES ((SELECT MAX(ApptID) FROM APPOINTMENT_ttn), 'PT', 'L4');
+	INSERT INTO APPTDETAIL_ttn
+*
+ERROR at line 1:
+ORA-02291: integrity constraint (SYSTEM.SYS_C0010429) violated - parent key not found 
+
+
+SQL> 
+SQL> 	     --8. Add a new appointment status:
+SQL> 	     INSERT INTO APPTSTATUS_ttn
+  2  		     VALUES ('RS', 'Rescheduled');
+
+1 row created.
+
+SQL> 
+SQL> 	     --9. Change the ApptStatus for ApptID 108 to “RS”
+SQL> 	     UPDATE APPOINTMENT_ttn
+  2  		     SET ApptStatusCode = 'RS'
+  3  	     WHERE ApptID = 108;
+
+1 row updated.
+
+SQL> 
+SQL> 	     --10. Commit all changes above before proceeding to the next step.
+SQL> 	     COMMIT;
+
+Commit complete.
+
+SQL> 
+SQL> 	     --The above statements will add new rows everytime you run your file, so be sure to run your Project 2 file immediatley before
+SQL> 	     --your final run of Project 3. Otherwise, your final Project 3 results will have incorrect data based on the extra rows.
+SQL> 
+SQL> 	     --11. List the patient ID, first name, and last name for all patients for whom no phone number exists.
+SQL> 	     SELECT PatientID, PatientFName, PatientLName
+  2  		     FROM PATIENT_ttn
+  3  	     WHERE PatientPhone IS NULL ;
+
+ PATIENTID PATIENTFNAME    PATIENTLNAME                                                                                           
+---------- --------------- ---------------                                                                                        
+########## Amanda          Green                                                                                                  
+
+SQL> 
+SQL> 	     --12. List the count of unique insurance companies found in the Appointment table. Use Insurance Co Count as the column
+SQL> 	     --heading.
+SQL> 	     SELECT COUNT(DISTINCT InsCoID) AS "Insurance Co Count"
+  2  		     FROM INSURANCECO_ttn;
+
+Insurance Co Count                                                                                                                
+------------------                                                                                                                
+                 4                                                                                                                
+
+SQL> 
+SQL> 	     --13. List the ApptReasonCode and count of appointments for each reason code. Use the following column headings: ReasonCode,
+SQL> 	     --ApptCount. Hint: Use a GROUP BY clause.
+SQL> 	     SELECT ApptReasonCode AS "ReasonCode", COUNT(ApptReasonCode) AS "ApptCount"
+  2  		     FROM APPTREASON_ttn
+  3  	     GROUP BY ApptReasonCode;
+
+ReasonCode   ApptCount                                                                                                            
+----------- ----------                                                                                                            
+NP                   1                                                                                                            
+GBP                  1                                                                                                            
+XR                   1                                                                                                            
+PSF                  1                                                                                                            
+SR                   1                                                                                                            
+PT                   1                                                                                                            
+AI                   1                                                                                                            
+HP                   1                                                                                                            
+
+8 rows selected.
+
+SQL> 
+SQL> 	     --14. List the BillingType and count of appointments for each billing type. Sort by count. Hint: Use a GROUP BY clause.
+SQL> 	     SELECT BillingType AS "BillingType", COUNT(BillingType) AS "BillingCount"
+  2  		     FROM BILLINGTYPE_ttn
+  3  	     GROUP BY BillingType;
+
+BillingType  BillingCount                                                                                                         
+------------ ------------                                                                                                         
+I                       1                                                                                                         
+SP                      1                                                                                                         
+WC                      1                                                                                                         
+
+SQL> 
+SQL> 	     --15. List all rows and all columns from the ApptDetail table; sort by ApptID then by ReasonCode, both in ascending order.
+SQL> 	     --Use the following column headings: ApptID, ReasonCode, BlockCode.
+SQL> 	     SELECT * FROM APPTDETAIL_ttn
+  2  	     ORDER BY ApptID, ReasonCode;
+
+    APPTID BLOCKCODE  REASONCODE                                                                                                  
+---------- ---------- -----------                                                                                                 
+########## L2         GBP                                                                                                         
+########## L1         NP                                                                                                          
+########## L2         XR                                                                                                          
+########## L1         PSF                                                                                                         
+########## L1         SR                                                                                                          
+########## L1         PSF                                                                                                         
+########## L2         SR                                                                                                          
+########## L3         PT                                                                                                          
+########## L2         AI                                                                                                          
+########## L1         NP                                                                                                          
+########## L4         PT                                                                                                          
+########## L3         PT                                                                                                          
+########## L2         GBP                                                                                                         
+########## L1         NP                                                                                                          
+########## L1         PSF                                                                                                         
+########## L2         SR                                                                                                          
+########## L4         PT                                                                                                          
+########## L2         HP                                                                                                          
+########## L1         NP                                                                                                          
+########## L2         XR                                                                                                          
+
+20 rows selected.
+
+SQL> 
+SQL> 	     --16. List the average number of minutes for all rows in the ApptDetail table.  Use “Avg Appt Time” as the column heading and
+SQL> 	     --format the result as “# Minutes” (where “#” represents the calculated number of minutes).
+SQL> 	     SELECT TO_CHAR(AVG(BlockCodeMinutes), '999') AS "#Minutes"
+  2  		     FROM APPTDETAIL_ttn A, BLOCK_ttn B
+  3  	     WHERE A.BlockCode = B.BlockCode;
+
+#Min                                                                                                                              
+----                                                                                                                              
+  15                                                                                                                              
+
+SQL> 
+SQL> 	     --17. List the appt ID, date, patient ID, patient last name, doctor ID, doctor last name, appt status desc for all
+SQL> 	     --appointments on or after 9/25/21. Show the date formatted as “mm/dd/yy.”
+SQL> 	     SELECT ApptID, TO_CHAR(ApptDateTime, 'mm/dd/yy'), PatientID, A.DrID, DrLName, ApptStatusDesc
+  2  		     FROM APPOINTMENT_ttn A, DOCTOR_ttn D, APPTSTATUS_ttn AP
+  3  	     WHERE A.DrID = D.DrID AND
+  4  	     A.ApptStatusCode = AP.ApptStatusCode AND
+  5  	     ApptDateTime >= '25-SEP-21';
+
+    APPTID TO_CHAR(  PATIENTID       DRID DRLNAME         APPTSTATUSDESC                                                          
+---------- -------- ---------- ---------- --------------- ---------------                                                         
+########## 09/25/21 ########## ########## Smith           Complete                                                                
+########## 09/25/21 ########## ########## May             Complete                                                                
+########## 09/25/21 ########## ########## Smith           Complete                                                                
+########## 09/25/21 ########## ########## Jones           Complete                                                                
+########## 09/25/21 ########## ########## Smith           Complete                                                                
+########## 09/25/21 ########## ########## Schultz         Complete                                                                
+########## 09/25/21 ########## ########## Schultz         Confirmed                                                               
+########## 09/25/21 ########## ########## May             Confirmed                                                               
+########## 09/26/21 ########## ########## Jones           Confirmed                                                               
+########## 09/26/21 ########## ########## Jones           Confirmed                                                               
+########## 09/26/21 ########## ########## Schultz         Not Confirmed                                                           
+########## 09/26/21 ########## ########## Schultz         Not Confirmed                                                           
+########## 09/25/21 ########## ########## Smith           Rescheduled                                                             
+
+13 rows selected.
+
+SQL> 
+SQL> 	     --18. List the appt ID, date/time, and total number of minutes for each appointment. Use the following column headings:
+SQL> 	     --Appt ID, DateTime, Total Minutes. Hint: Use a GROUP BY clause.
+SQL> 	     SELECT A.ApptID AS "Appt ID", ApptDateTime AS "DateTime", SUM(BlockCodeMinutes) AS "Total Minutes"
+  2  		     FROM APPOINTMENT_ttn A, BLOCK_ttn B, APPTDETAIL_ttn AD
+  3  	     WHERE A.ApptID = AD.ApptID AND
+  4  	     AD.BlockCode = B.BlockCode
+  5  	     GROUP BY A.ApptID, ApptDateTime;
+
+   Appt ID DateTime          Total Minutes                                                                                        
+---------- ----------------- -------------                                                                                        
+       107 25-SEP-2021 11:30            20                                                                                        
+       108 25-SEP-2021 11:30            25                                                                                        
+       105 25-SEP-2021 10:30            25                                                                                        
+       109 25-SEP-2021 14:00            25                                                                                        
+       110 26-SEP-2021 08:30            30                                                                                        
+       104 25-SEP-2021 10:30            20                                                                                        
+       101 25-SEP-2021 09:00            40                                                                                        
+       103 25-SEP-2021 10:30            25                                                                                        
+       111 26-SEP-2021 08:30            40                                                                                        
+       102 25-SEP-2021 09:00            20                                                                                        
+       106 25-SEP-2021 10:30            30                                                                                        
+
+11 rows selected.
+
+SQL> 
+SQL> 	     --19. List the block code, block code description, and count of appointments for each block code. Sort by count in descending
+SQL> 	     --order. Use the following column headings: BlockCode, Description, Count. Hint: Use a GROUP BY clause.
+SQL> 	     SELECT B.BlockCode AS "BlockCode", BlockCodeDesc AS "Description", COUNT(A.ApptID) AS "Count"
+  2  		     FROM BLOCK_ttn B, APPTDETAIL_ttn A
+  3  	     WHERE A.BlockCode = B.BlockCode
+  4  	     GROUP BY B.BlockCode, BlockCodeDesc;
+
+BlockCode  Descrip      Count                                                                                                     
+---------- ------- ----------                                                                                                     
+L1         Level 1          8                                                                                                     
+L2         Level 2          8                                                                                                     
+L3         Level 3          2                                                                                                     
+L4         Level 4          2                                                                                                     
+
+SQL> 
+SQL> 	     --20. List the patient ID, first name, last name, and phone number for all patients. Show the phone number formatted as
+SQL> 	     --‘(###) ###-####’ and sort by patient ID. Use the following column headings: Patient ID, First Name, Last Name, Phone.
+SQL> 	     '(###)###-####' and sort by patient ID.
+SP2-0734: unknown command beginning "'(###)###-..." - rest of line ignored.
+SQL> 	     SELECT PatientID AS "Patient ID", PatientFName AS "First Name", PatientLName AS "Last Name",  SUBSTR(PatientPhone, 1, 3) || '-' || SUBSTR(PatientPhone, 4, 3) || '-' || SUBSTR(PatientPhone, 7, 4) AS "Phone"
+  2  	     FROM PATIENT_ttn;
+
+Patient ID First Name      Last Name       Phone                                                                                  
+---------- --------------- --------------- ------------------------------------------                                             
+       101 Wesleyy         Tanner          214-555-1234                                                                           
+       100 Brenda          Rhodes          214-555-9191                                                                           
+        15 Jeff            Miner           469-555-2301                                                                           
+        77 Kim             Jackson         817-555-4911                                                                           
+       119 Mary            Vaugn           817-555-2334                                                                           
+        97 Chris           Mancha          469-555-3440                                                                           
+        28 Renee           Walker          214-555-9285                                                                           
+       105 Johnny          Redmond         214-555-1084                                                                           
+        84 James           Clayton         214-555-9285                                                                           
+        23 Shelby          Davis           817-555-1198                                                                           
+       120 Amanda          Green           --                                                                                     
+
+11 rows selected.
+
+SQL> 
+SQL> 	     --21. List the pay type, pay type description, and count of appointments for each pay type. Use the following column headings:
+SQL> 	     --Pay Type, Description, Count. Sort by count in descending order. Hint: use a GROUP BY clause.
+SQL> 	     SELECT A.BillingType AS "Billing Type", BillingTypeDesc AS "Description", COUNT(A.ApptID) AS "Count"
+  2  		     FROM BILLINGTYPE_ttn B, APPOINTMENT_ttn A
+  3  	     WHERE B.BillingType = A.BillingType
+  4  	     GROUP BY A.BillingType, BillingTypeDesc;
+
+Billing Type    Description          Count                                                                                        
+--------------- --------------- ----------                                                                                        
+SP              Self-Pay                 3                                                                                        
+WC              Workers Comp             2                                                                                        
+I               Insurance                8                                                                                        
+
+SQL> 
+SQL> 	     --22. List the patient ID, first name, last name, and phone number for all “self pay” patients. Show the phone number
+SQL> 	     --formatted as ‘(###) ###-####’ and use the following column headings: PatientID, FirstName, LastName, Phone.
+SQL> 	     SELECT A.PatientID AS "Patient ID", PatientFName AS "First Name", PatientLName AS "Last Name", SUBSTR(PatientPhone, 1, 3) || '-' || SUBSTR(PatientPhone, 4, 3) || '-' || SUBSTR(PatientPhone, 7, 4) AS "Phone"
+  2  		     FROM PATIENT_ttn P, BILLINGTYPE_ttn B, APPOINTMENT_ttn A
+  3  	     WHERE A.BillingType = B.BillingType AND
+  4  	     A.PatientID = P.PatientID AND
+  5  	     A.BillingType = 'SP';
+
+Patient ID First Name      Last Name       Phone                                                                                  
+---------- --------------- --------------- ------------------------------------------                                             
+        15 Jeff            Miner           469-555-2301                                                                           
+        15 Jeff            Miner           469-555-2301                                                                           
+        97 Chris           Mancha          469-555-3440                                                                           
+
+SQL> 
+SQL> 	     --23. List the appt ID, date/time, patient ID, last name, doctor ID, doctor last name, pay type description, and appointment
+SQL> 	     --status description for all appointments on or before 6/25/20. Format the date/time as “mm-dd-yyyy 00:00” and use the following
+SQL> 	     --column headings: Appt ID, DateTime, Patient ID, Patient Name, Dr ID, Dr Name, Pay Type, Appt Status. Sort by Appt ID.
+SQL> 	     SELECT ApptID AS "Appt ID", ApptDateTime AS "DateTime", A.PatientID AS "Patient ID", (PatientFName || ' ' || PatientLName) AS "Patient Name", A.DrID AS "Dr ID", (DrFName || ' ' || DrLName) AS "Dr Name", A.BillingType AS "Bill Type", A.ApptStatusCode AS "Appt Status"
+  2  		     FROM APPOINTMENT_ttn A, APPTSTATUS_ttn AP, DOCTOR_ttn D, BILLINGTYPE_ttn B, PATIENT_ttn P
+  3  	     WHERE A.ApptStatusCode = AP.ApptStatusCode AND
+  4  	     A.DrID = D.DrID AND
+  5  	     A.BillingType = B.BillingType AND
+  6  	     A.PatientID = P.PatientID AND
+  7  	     ApptDateTime >= '25-SEP-21'
+  8  	     GROUP BY ApptID, ApptDateTime, A.PatientID, PatientFName, PatientLName, A.DrID, DrFName, DrLName, A.BillingType, A.ApptStatusCode;
+
+   Appt ID DateTime          Patient ID Patient Name                         Dr ID Dr Name                         Bill Type      
+---------- ----------------- ---------- ------------------------------- ---------- ------------------------------- ---------------
+Ap                                                                                                                                
+--                                                                                                                                
+       101 25-SEP-2021 09:00        101 Wesleyy Tanner                           2 Michael Smith                   I              
+CM                                                                                                                                
+                                                                                                                                  
+       113 26-SEP-2021 13:00        101 Wesleyy Tanner                           3 Ray Schultz                     I              
+NC                                                                                                                                
+                                                                                                                                  
+       102 25-SEP-2021 09:00        100 Brenda Rhodes                            5 Janice May                      I              
+CM                                                                                                                                
+                                                                                                                                  
+       103 25-SEP-2021 10:30         15 Jeff Miner                               2 Michael Smith                   SP             
+CM                                                                                                                                
+                                                                                                                                  
+       112 26-SEP-2021 11:00         15 Jeff Miner                               1 Kay Jones                       SP             
+CN                                                                                                                                
+                                                                                                                                  
+       104 25-SEP-2021 10:30         77 Kim Jackson                              1 Kay Jones                       WC             
+CM                                                                                                                                
+                                                                                                                                  
+       105 25-SEP-2021 10:30        119 Mary Vaugn                               2 Michael Smith                   I              
+CM                                                                                                                                
+                                                                                                                                  
+       106 25-SEP-2021 10:30         97 Chris Mancha                             3 Ray Schultz                     SP             
+CM                                                                                                                                
+                                                                                                                                  
+       107 25-SEP-2021 11:30         28 Renee Walker                             3 Ray Schultz                     I              
+CN                                                                                                                                
+                                                                                                                                  
+       108 25-SEP-2021 11:30        105 Johnny Redmond                           2 Michael Smith                   I              
+RS                                                                                                                                
+                                                                                                                                  
+       109 25-SEP-2021 14:00         84 James Clayton                            5 Janice May                      I              
+CN                                                                                                                                
+                                                                                                                                  
+       110 26-SEP-2021 08:30         84 James Clayton                            3 Ray Schultz                     I              
+NC                                                                                                                                
+                                                                                                                                  
+       111 26-SEP-2021 08:30         23 Shelby Davis                             1 Kay Jones                       WC             
+CN                                                                                                                                
+                                                                                                                                  
+
+13 rows selected.
+
+SQL> 
+SQL> 	     --24. List the doctor ID, first name, last name, and count of appointments for each doctor. Combine the first and last name
+SQL> 	     --into one column and use the following column headings:  Dr ID, Dr Name, Appt Count. Sort by doctor last name.
+SQL> 	     SELECT A.DrID AS "Dr ID", DrFName || ' ' || DrLName AS "Dr Name", COUNT(A.ApptID) AS "Appt Count"
+  2  		     FROM DOCTOR_ttn D, APPOINTMENT_ttn A
+  3  	     WHERE A.DrID = D.DrID
+  4  	     GROUP BY A.DrID, DrFName, DrLName
+  5  	     ORDER BY DrLName;
+
+     Dr ID Dr Name                         Appt Count                                                                             
+---------- ------------------------------- ----------                                                                             
+         1 Kay Jones                                3                                                                             
+         5 Janice May                               2                                                                             
+         3 Ray Schultz                              4                                                                             
+         2 Michael Smith                            4                                                                             
+
+SQL> 
+SQL> 	     --25. List the patient ID, patient first name, patient last name, and total number of appointments for each patient. Sort by
+SQL> 	     --appointment count in descending order.  Use the following column headings:  Patient ID, Patient First Name, Patient Last
+SQL> 	     --Name, Appt Count. Hint: use a GROUP BY clause.
+SQL> 	     SELECT PatientID AS "Patient ID", PatientFName AS "First Name", PatientLName AS "Last Name", COUNT(PatientID) AS "Appt Count"
+  2  		     FROM PATIENT_ttn
+  3  	     GROUP BY PatientID, PatientFName, PatientLName;
+
+Patient ID First Name      Last Name       Appt Count                                                                             
+---------- --------------- --------------- ----------                                                                             
+       101 Wesleyy         Tanner                   1                                                                             
+       100 Brenda          Rhodes                   1                                                                             
+        15 Jeff            Miner                    1                                                                             
+        77 Kim             Jackson                  1                                                                             
+       119 Mary            Vaugn                    1                                                                             
+        97 Chris           Mancha                   1                                                                             
+        28 Renee           Walker                   1                                                                             
+       105 Johnny          Redmond                  1                                                                             
+        84 James           Clayton                  1                                                                             
+        23 Shelby          Davis                    1                                                                             
+       120 Amanda          Green                    1                                                                             
+
+11 rows selected.
+
+SQL> 
+SQL> 	     --26. For each appointment, list the appt ID, date/time, patient ID, patient first name, patient last name, doctor ID, doctor
+SQL> 	     --last name, and count of reason codes; combine the patient first and last name into one column, and sort by count of reason
+SQL> 	     --codes in descending order, then by appt ID in ascending order.  Show the date/time formatted as ‘mm-dd-yyyy 00:00.’	Use the
+SQL> 	     --following column headings:  Appt, DateTime, Patient ID, Patient Name, Dr ID, Dr Name, Code Count. Hint:	use a GROUP BY
+SQL> 	     --clause.
+SQL> 	     SELECT A.ApptID AS "Appt", ApptDateTime AS "DateTime", A.PatientID AS "Patient ID", PatientFName || '' || PatientLName AS "Patient Name", A.DrID AS "Dr ID", DrFName || '' || DrLName AS "Dr Name", COUNT(AD.ReasonCode) AS "Code Count"
+  2  	     FROM APPOINTMENT_ttn A, DOCTOR_ttn D, APPTREASON_ttn AR, PATIENT_ttn P, APPTDETAIL_ttn AD
+  3  		     WHERE A.PatientID = P.PatientID AND
+  4  	     D.DrID = A.DrID AND
+  5  	     AD.ReasonCode = AR.ApptReasonCode AND
+  6  	     A.ApptID = AD.ApptID
+  7  	     GROUP BY A.ApptID, ApptDateTime, A.PatientID, PatientFName, PatientLName, A.DrID, DrFName, DrLName;
+
+      Appt DateTime          Patient ID Patient Name                        Dr ID Dr Name                        Code Count       
+---------- ----------------- ---------- ------------------------------ ---------- ------------------------------ ----------       
+       107 25-SEP-2021 11:30         28 ReneeWalker                             3 RaySchultz                              1       
+       108 25-SEP-2021 11:30        105 JohnnyRedmond                           2 MichaelSmith                            2       
+       105 25-SEP-2021 10:30        119 MaryVaugn                               2 MichaelSmith                            2       
+       109 25-SEP-2021 14:00         84 JamesClayton                            5 JaniceMay                               2       
+       110 26-SEP-2021 08:30         84 JamesClayton                            3 RaySchultz                              1       
+       104 25-SEP-2021 10:30         77 KimJackson                              1 KayJones                                1       
+       101 25-SEP-2021 09:00        101 WesleyyTanner                           2 MichaelSmith                            3       
+       103 25-SEP-2021 10:30         15 JeffMiner                               2 MichaelSmith                            2       
+       111 26-SEP-2021 08:30         23 ShelbyDavis                             1 KayJones                                3       
+       102 25-SEP-2021 09:00        100 BrendaRhodes                            5 JaniceMay                               2       
+       106 25-SEP-2021 10:30         97 ChrisMancha                             3 RaySchultz                              1       
+
+11 rows selected.
+
+SQL> 
+SQL> 	     --27. List the appt ID, appt date, appt time, and total number of minutes for the appointment(s) with the highest total
+SQL> 	     --minutes.  Sort by appt ID.  Use the following column headings:  ApptID, Date, Time, TotalMinutes. Hint: use a GROUP BY
+SQL> 	     --clause and a nested SELECT or HAVING.
+SQL> 	     SELECT A.ApptID AS "Appt ID", ApptDateTime AS "DateTime",	SUM(B.BlockCodeMinutes) as "TotalMinutes"
+  2  		     FROM APPOINTMENT_ttn A, APPTDETAIL_ttn AD, BLOCK_ttn B
+  3  	     WHERE A.ApptID = AD.ApptID AND
+  4  	     AD.BlockCode = B.BlockCode
+  5  	     GROUP BY A.ApptID, ApptDateTime
+  6  	     HAVING SUM(BlockCodeMinutes) >= '30';
+
+   Appt ID DateTime          TotalMinutes                                                                                         
+---------- ----------------- ------------                                                                                         
+       101 25-SEP-2021 09:00           40                                                                                         
+       110 26-SEP-2021 08:30           30                                                                                         
+       111 26-SEP-2021 08:30           40                                                                                         
+       106 25-SEP-2021 10:30           30                                                                                         
+
+SQL> 
+SQL> 	     --28. List the doctor ID, first name, last name, and count of appointments for the doctor with the least number of
+SQL> 	     --appointments.  Combine the first and last names into one column, use the following column headings: Dr ID, Name,
+SQL> 	     --Appt Count. Hint: use a GROUP BY clause and a nested SELECT or HAVING.
+SQL> 	     SELECT A.DrID AS "Dr ID", DrFName || '' || DrLName AS "Dr Name", COUNT(A.ApptID) AS "Appt Count"
+  2  		     FROM DOCTOR_ttn D, APPOINTMENT_ttn A
+  3  	     WHERE A.DrID = D.DrID
+  4  	     GROUP BY A.DrID, DrFName, DrLName
+  5  	     HAVING COUNT(A.DrID) >= '2';
+
+     Dr ID Dr Name                        Appt Count                                                                              
+---------- ------------------------------ ----------                                                                              
+         1 KayJones                                3                                                                              
+         2 MichaelSmith                            4                                                                              
+         5 JaniceMay                               2                                                                              
+         3 RaySchultz                              4                                                                              
+
+SQL> 
+SQL> 	     --29. List the appt ID, Date/time, patient ID, patient last name, doctor ID, and doctor last name for all appointments with a
+SQL> 	     --total number of minutes greater than or equal to 30 minutes. Sort by total minutes in descending order, then by appt ID in
+SQL> 	     --ascending order. Use the following column headings: Appt ID, DateTime, Patient ID, Patient Name, Doctor ID, Doctor Name.
+SQL> 	     SELECT A.ApptID AS "Appt ID", ApptDateTime AS "DateTime", A.PatientID AS "Patient ID", PatientLName AS "Patient Name", A.DrID AS "Doctor ID", DrLName AS "Doctor Name", SUM(BlockCodeMinutes)
+  2  		     FROM APPOINTMENT_ttn A, DOCTOR_ttn D, PATIENT_ttn P, APPTDETAIL_ttn AD, BLOCK_ttn B
+  3  	     WHERE A.DrID = D.DrID AND
+  4  	     A.PatientID = P.PatientID AND
+  5  	     A.ApptID = AD.ApptID AND
+  6  	     AD.BlockCode = B.BlockCode
+  7  	     GROUP BY A.ApptID, ApptDateTime, A.PatientID, PatientLName, A.DrID, DrLName
+  8  	     HAVING SUM(BlockCodeMinutes) >= 30;
+
+   Appt ID DateTime          Patient ID Patient Name     Doctor ID Doctor Name     SUM(BLOCKCODEMINUTES)                          
+---------- ----------------- ---------- --------------- ---------- --------------- ---------------------                          
+       106 25-SEP-2021 10:30         97 Mancha                   3 Schultz                            30                          
+       101 25-SEP-2021 09:00        101 Tanner                   2 Smith                              40                          
+       111 26-SEP-2021 08:30         23 Davis                    1 Jones                              40                          
+       110 26-SEP-2021 08:30         84 Clayton                  3 Schultz                            30                          
+
+SQL> 
+SQL> 	     --30. List the appt ID, date, patient last name, and doctor last name for all appointments that have a total number of
+SQL> 	     --minutes greater than the average total minutes for all appointments. Use the following column headings: ApptID, Date,
+SQL> 	     --Patient, Doctor, TotalMinutes.  Sort by appt ID.  Hint:	use a nested SELECT.
+SQL> 	     SELECT A.ApptID AS "ApptID", ApptDateTime AS "Date", PatientLName AS "Patient Name", DrLName AS "Doctor", SUM(BlockCodeMinutes) AS "TotalMinutes"
+  2  		     FROM APPOINTMENT_ttn A, DOCTOR_ttn D, PATIENT_ttn P, APPTDETAIL_ttn AD, BLOCK_ttn B
+  3  	     WHERE A.DrID = D.DrID AND
+  4  	     A.PatientID = P.PatientID AND
+  5  	     A.ApptID = AD.ApptID AND
+  6  	     AD.BlockCode = B.BlockCode
+  7  	     GROUP BY A.ApptID, ApptDateTime, PatientLName, DrLName
+  8  	     HAVING SUM(BlockCodeMinutes) > AVG(BlockCodeMinutes);
+
+    ApptID Date              Patient Name    Doctor          TotalMinutes                                                         
+---------- ----------------- --------------- --------------- ------------                                                         
+########## 25-SEP-2021 09:00 Rhodes          May                       20                                                         
+########## 25-SEP-2021 11:30 Redmond         Smith                     25                                                         
+########## 25-SEP-2021 10:30 Miner           Smith                     25                                                         
+########## 25-SEP-2021 14:00 Clayton         May                       25                                                         
+########## 25-SEP-2021 10:30 Vaugn           Smith                     25                                                         
+########## 26-SEP-2021 08:30 Davis           Jones                     40                                                         
+########## 25-SEP-2021 09:00 Tanner          Smith                     40                                                         
+
+7 rows selected.
+
+SQL> 
+SQL> 	     --31. List the appt ID, date, patient last name, pay type description, insurance company, and count of reason codes for all
+SQL> 	     --appointments that have 2 or more reason. Sort by count of reason codes in descending order, then by appt ID in ascending
+SQL> 	     --order.  Use the following column headings: ApptID, Date, Patient, PayType, InsCo, ReasonCount.
+SQL> 	     SELECT A.ApptID AS "ApptID", ApptDateTime AS "Date", PatientLName AS "Patient Name", BillingTypeDesc AS "BillType", InsCoName AS "InsCo", COUNT(AD.ReasonCode) AS "ReasonCount"
+  2  		     FROM APPOINTMENT_ttn A, BILLINGTYPE_ttn B, PATIENT_ttn P, APPTDETAIL_ttn AD, APPTREASON_ttn AR, INSURANCECO_ttn I
+  3  	     WHERE A.PatientID = P.PatientID AND
+  4  	     A.ApptID = AD.ApptID AND
+  5  	     A.BillingType = B.BillingType AND
+  6  	     AD.ReasonCode = AR.ApptReasonCode AND
+  7  	     A.InsCoID = I.InsCoID
+  8  	     GROUP BY A.ApptID, ApptDateTime, PatientLName, BillingTypeDesc, InsCoName
+  9  	     HAVING COUNT(AD.ReasonCode) >= '2';
+
+    ApptID Date              Patient Name    BillType        InsCo           ReasonCount                                          
+---------- ----------------- --------------- --------------- --------------- -----------                                          
+########## 25-SEP-2021 10:30 Vaugn           Insurance       Blue Cross                2                                          
+########## 25-SEP-2021 11:30 Redmond         Insurance       Humana                    2                                          
+########## 26-SEP-2021 08:30 Davis           Workers Comp    Humana                    3                                          
+########## 25-SEP-2021 09:00 Tanner          Insurance       Humana                    3                                          
+########## 25-SEP-2021 09:00 Rhodes          Insurance       Blue Cross                2                                          
+########## 25-SEP-2021 14:00 Clayton         Insurance       TriCare                   2                                          
+
+6 rows selected.
+
+SQL> 
+SQL> 	     --32. List the reason code, reason description, block code, block minutes for the appt detail row with the highest number of
+SQL> 	     --minutes in each appointment.  Show the minutes formatted as “# minutes” and use the following column headings: Reason Code,
+SQL> 	     --Description, Block Code, Minutes. Hint: use a GROUP by and nested SELECT.
+SQL> 	     SELECT ApptReasonCode AS "Reason Code", ApptReasonDesc AS "Description", AD.BlockCode AS "Block Code", BlockCodeMinutes AS "Minutes"
+  2  		     FROM APPTDETAIL_ttn AD, APPTREASON_ttn AR, BLOCK_ttn B
+  3  	     WHERE AD.ReasonCode = AR.ApptReasonCode AND
+  4  	     AD.BlockCode = B.BlockCode AND
+  5  	     (AD.ApptID, BlockCodeMinutes) IN (SELECT ApptID, MAX(BlockCodeMinutes) FROM APPTDETAIL_ttn GROUP BY ApptID);
+
+Rea Description               Bl    Minutes                                                                                       
+--- ------------------------- -- ----------                                                                                       
+NP  New Patient               L1         10                                                                                       
+NP  New Patient               L1         10                                                                                       
+NP  New Patient               L1         10                                                                                       
+NP  New Patient               L1         10                                                                                       
+GBP General Back Pain         L2         15                                                                                       
+GBP General Back Pain         L2         15                                                                                       
+XR  X-Ray                     L2         15                                                                                       
+XR  X-Ray                     L2         15                                                                                       
+PSF Post-Surgery Follow Up    L1         10                                                                                       
+PSF Post-Surgery Follow Up    L1         10                                                                                       
+PSF Post-Surgery Follow Up    L1         10                                                                                       
+SR  Suture Removal            L1         10                                                                                       
+SR  Suture Removal            L2         15                                                                                       
+SR  Suture Removal            L2         15                                                                                       
+PT  Physical Therapy          L3         20                                                                                       
+PT  Physical Therapy          L4         30                                                                                       
+PT  Physical Therapy          L3         20                                                                                       
+PT  Physical Therapy          L4         30                                                                                       
+AI  Auto Injury               L2         15                                                                                       
+HP  Hip Pain                  L2         15                                                                                       
+
+20 rows selected.
+
+SQL> 
+SQL> 	     --Turn off logging.
+SQL> 		     set echo on
+SQL> 
+SQL> 	     --CLose the file.
+SQL> 		     spool off
